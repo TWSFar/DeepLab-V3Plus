@@ -8,3 +8,10 @@ class Path(object):
         else:
             print('Dataset {} not available.'.format(dataset))
             raise NotImplementedError
+    
+    def weights_root_dir(backbone):
+        if backbone == 'resnet101':
+            return 'C:\\Users\\TWSF\\Desktop\\ResNet\\weights\\resnet101.pth'
+        else:
+            print('weights {} not available.'.format(backbone))
+            raise NotImplementedError
