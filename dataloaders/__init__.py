@@ -5,8 +5,8 @@ from torch.utils.data import DataLoader
 def make_data_loader(args, **kwargs):
 
     if args.dataset == 'voc':
-        train_set = pascal.VOCSegmentation(args, split='train')
-        val_set = pascal.VOCSegmentation(args, split='val')
+        train_set = voc.VOCSegmentation(args, split='train')
+        val_set = voc.VOCSegmentation(args, split='val')
         if args.use_sbd:
             raise NotImplementedError
 

@@ -193,7 +193,7 @@ class ResNet(nn.Module):
                 m.bias.data.zero_()
 
 
-def resnet101(output_stride, BatchNorm, pretrained=True):
+def ResNet101(output_stride, BatchNorm, pretrained=True):
     """Constructs a ResNet-101 model.
 
     Args:
