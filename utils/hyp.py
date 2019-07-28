@@ -104,7 +104,6 @@ if args.lr is None:
     }
     args.lr = lrs[args.dataset.lower()] / (4 * ng) * args.batch_size if ng > 1 else lrs[args.dataset.lower()]
 
-
 if args.checkname is None:
     args.checkname = 'deeplab-' + str(args.backbone)
 
