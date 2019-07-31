@@ -59,6 +59,8 @@ parser.add_argument('--nesterov', action='store_true', default=False,
 # cuda, seed and logging
 parser.add_argument('--cuda', action='store_true', default=
                 False, help='ables CUDA training')
+parser.add_argument('--ng', type=int, default=0, help='number of gpu')
+
 parser.add_argument('--seed', type=int, default=1, metavar='S',
                 help='random seed (default: 1)')
 # checking point
@@ -77,13 +79,13 @@ parser.add_argument('--no-val', action='store_true', default=False,
 
 args = parser.parse_args()
 
-args.device, ng = select_device(is_head=True) 
-if ng > 0:
+args.device, args.ng = select_device(is_head=True) 
+if args.ng > 0:
     args.cuda = True
-    args.gpu_ids = [int(s) for s in range(ng)]
+    args.gpu_ids = [int(s) for s in range(args.ng)]
 
 if args.sync_bn is None:
-    args.sync_bn = True if ng > 1 else False
+    args.sync_bn = True if args.ng > 1 else False
 
 if args.epochs is None:
     epochs = {
@@ -92,7 +94,7 @@ if args.epochs is None:
    }
     args.epochs = epochs[args.dataset.lower()]
 if args.batch_size is None:
-    args.batch_size = max(4 * ng, 2)
+    args.batch_size = max(4 * args.ng, 2)
 
 if args.test_batch_size is None:
     args.test_batch_size = args.batch_size
@@ -102,7 +104,7 @@ if args.lr is None:
         'coco': 0.1,
         'voc': 0.007,
     }
-    args.lr = lrs[args.dataset.lower()] / (4 * ng) * args.batch_size if ng > 1 else lrs[args.dataset.lower()]
+    args.lr = lrs[args.dataset.lower()] / (4 * args.ng) * args.batch_size if args.ng > 1 else lrs[args.dataset.lower()]
 
 if args.checkname is None:
     args.checkname = 'deeplab-' + str(args.backbone)
