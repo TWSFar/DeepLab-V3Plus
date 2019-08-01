@@ -47,7 +47,7 @@ class DeepLab(nn.Module):
     def get_1x_lr_params(self):
         modules = [self.backbone]
         for i in range(len(modules)):
-            for m in modules[i].name_modules():
+            for m in modules[i].named_modules():
                 if isinstance(m[1], nn.Conv2d) or isinstance(m[1], SynchronizedBatchNorm2d) \
                         or isinstance(m[1], nn.BatchNorm2d):
                     for p in m[1].parameters():
@@ -57,7 +57,7 @@ class DeepLab(nn.Module):
     def get_10x_lr_params(self):
         modules = [self.aspp, self.decoder]
         for i in range(len(modules)):
-            for m in modules[i].name_modules():
+            for m in modules[i].named_modules():
                 if isinstance(m[1], nn.Conv2d) or isinstance(m[1], SynchronizedBatchNorm2d) \
                         or isinstance(m[1], nn.BatchNorm2d):
                     for p in m[1].parameters():

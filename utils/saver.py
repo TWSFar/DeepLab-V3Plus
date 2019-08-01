@@ -12,7 +12,7 @@ class Saver(object):
         self.args = args
         self.directory = os.path.join('run', args.dataset, args.checkname)
         self.runs = sorted(glob.glob(osp.join(self.directory, 'experiment_*')))
-        run_id = int(sels.runs[-1].split('_')[-1]) + 1 if self.runs else 0
+        run_id = int(self.runs[-1].split('_')[-1]) + 1 if self.runs else 0
 
         self.experiment_dir = os.path.join(self.directory, 'experiment_{}'.format(str(run_id)))
         if not osp.exists(self.experiment_dir):
@@ -30,7 +30,7 @@ class Saver(object):
                 previous_miou = [0.0]
                 for run in self.runs:
                     run_id = run.split('_')[-1]
-                    path = osp.join(self.directory, 'experiment_{}'.format(str(run_id)))
+                    path = osp.join(self.directory, 'experiment_{}'.format(str(run_id)), 'best_pred.txt')
                     if osp.exists(path):
                         with open(path, 'r') as f:
                             miou = float(f.readline())

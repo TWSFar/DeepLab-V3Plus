@@ -90,7 +90,7 @@ class VOCSegmentation(Dataset):
                 ctf.FixScaleCrop(crop_size=self.args.crop_size), # default = 513
                 ctf.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
                 ctf.ToTensor()])
-            return composed_transforms(pair)
+            return composed_transforms(sample)
     
     def _make_img_gt_point_pair(self, index):
         _img = Image.open(self.images[index]).convert('RGB')

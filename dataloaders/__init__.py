@@ -10,20 +10,17 @@ def make_data_loader(args, **kwargs):
         if args.use_sbd:
             raise NotImplementedError
 
-        num_classes = trian_set.NUM_CLASSES
+        num_classes = train_set.NUM_CLASSES
         train_loader = DataLoader(train_set,
                                   batch_size=args.batch_size,
                                   shuffle=True,
-                                  **kwargs=kwargs)
-        val_loader = DataLoader(val_loader,
+                                  **kwargs)
+        val_loader = DataLoader(val_set,
                                 batch_size=args.batch_size,
                                 shuffle=False,
-                                **kwargs=kwargs)
+                                **kwargs)
         test_loader = None
-    
         return train_loader, val_loader, test_loader, num_classes
-
-
     elif args.dataset == 'coco':
         raise NotImplementedError
         train_set = coco.COCOSegmentation(args, split='train')

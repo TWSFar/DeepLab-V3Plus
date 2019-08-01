@@ -64,8 +64,8 @@ parser.add_argument('--ng', type=int, default=0, help='number of gpu')
 parser.add_argument('--seed', type=int, default=1, metavar='S',
                 help='random seed (default: 1)')
 # checking point
-parser.add_argument('--resume', action='store_true',
-                help='put the path to resuming file if needed')
+parser.add_argument('--resume', type=str, default=None,
+                help='resuming path')
 parser.add_argument('--checkname', type=str, default=None,
                 help='set the checkpoint name')
 # finetuning pre-trained models

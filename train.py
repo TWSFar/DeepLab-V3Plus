@@ -24,16 +24,17 @@ class Trainer(object):
         self.saver.save_experiment_config()
         
         # Define Tensorboard Summary
-    
+        self.summary = TensorboardSummary(self.saver.experiment_dir)
+        self.writer = self.summary.create_summary()
 
         # Define Dataloader
-        kwargs = {'num_works': args.works, 'pin_memory': True}
+        kwargs = {'num_workers': args.workers, 'pin_memory': True}
         self.train_loader, self.val_loader, self.test_loader, self.nclass = make_data_loader(args, **kwargs)
 
         # Define network
         model = DeepLab(num_classes=self.nclass,
                         backbone=args.backbone,
-                        output_stride=args.output_stride,
+                        output_stride=args.out_stride,
                         sync_bn=args.sync_bn,
                         freeze_bn=args.freeze_bn)
 
@@ -82,7 +83,7 @@ class Trainer(object):
         if args.ng > 1:
             self.model = torch.nn.DataParallel(self.model, device_ids=self.args.device_ids)
             patch_replication_callback(self.mode)
-        self.model = self.mode().to(args.device)
+        self.model = self.model.to(args.device)
 
         # Clear start epoch if fine-tuning
         if args.ft:
@@ -91,10 +92,10 @@ class Trainer(object):
     def training(self, epoch):
         train_loss = 0.0
         self.model.train()
-        tqbr = tqdm(self.train_loader)
+        tbar = tqdm(self.train_loader)
         num_img_tr = len(self.train_loader)
         for i, sample in enumerate(tbar):
-            image, target = smaple['image'].to(args.device), sample['label'].to(args.device)
+            image, target = sample['image'].to(self.args.device), sample['label'].to(self.args.device)
             self.scheduler(self.optimizer, i, epoch, self.best_pred)
             self.optimizer.zero_grad()
             output = self.model(image)
@@ -103,12 +104,12 @@ class Trainer(object):
             self.optimizer.step()
             train_loss += loss.item()
             tbar.set_description('Train loss: %.3f' % (train_loss / (i+1)))
-            # self.writer.add_scalar('train/total_loss_iter', loss.item(), i + num_img_tr * epoch)
+            self.writer.add_scalar('train/total_loss_iter', loss.item(), i + num_img_tr * epoch)
 
             # Show 10 * 3 inference results each epoch
-            if i % (num_img_tr // 10) == 0:
+            if (num_img_tr // 10) and i % (num_img_tr // 10) == 0:
                 global_step = i + num_img_tr * epoch
-                # self.summary.visualize_image(self.writer, self.args.dataset, image, target, output, global_step)
+                self.summary.visualize_image(self.writer, self.args.dataset, image, target, output, global_step)
 
         self.writer.add_scalar('train/total_loss_epoch', train_loss, epoch)
         print('[Epoch: %d, numImages: %5d]' % (epoch, i * self.args.batch_size + image.data.shape[0]))
@@ -164,7 +165,7 @@ class Trainer(object):
             self.best_pred = new_pred
             self.saver.save_checkpoint({
                 'epoch': epoch + 1,
-                'state_dict': self.model.module.state_dict(),
+                'state_dict': self.model.module.state_dict() if self.args.ng > 1 else self.model.state_dict(),
                 'optimizer': self.optimizer.state_dict(),
                 'best_pred': self.best_pred,
             }, is_best)
