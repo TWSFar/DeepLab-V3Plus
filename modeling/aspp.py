@@ -13,18 +13,20 @@ except:
 class _ASPPModule(nn.Module):
     def __init__(self, inplanes, planes, kernel_size, padding, dilation, BatchNorm):
         super(_ASPPModule, self).__init__()
-        self.astrous_conv = nn.Conv2d(inplanes, planes, kernel_size=kernel_size, 
-                                stride=1, padding=padding, dilation=dilation, bias=False)
+        self.astrous_conv = nn.Conv2d(inplanes, planes,
+                                      kernel_size=kernel_size,
+                                      stride=1, padding=padding,
+                                      dilation=dilation, bias=False)
         self.bn = BatchNorm(planes)
         self.relu = nn.ReLU()
         self._init_weight()
-    
+
     def forward(self, x):
         x = self.astrous_conv(x)
         x = self.bn(x)
         x = self.relu(x)
 
-        return x 
+        return x
 
     def _init_weight(self):
         for m in self.modules():
@@ -37,7 +39,7 @@ class _ASPPModule(nn.Module):
                 m.weight.data.fill_(1)
                 m.bias.data.zero_()
 
-            
+
 class ASPP(nn.Module):
     def __init__(self, backbone, output_stide, BatchNorm):
         super(ASPP, self).__init__()
@@ -68,7 +70,7 @@ class ASPP(nn.Module):
         self.relu = nn.ReLU()
         self.dropout = nn.Dropout(0.5)
         self._init_weight()
-    
+
     def forward(self, x):
         x1 = self.aspp1(x)
         x2 = self.aspp2(x)
@@ -95,14 +97,14 @@ class ASPP(nn.Module):
                 m.weight.data.fill_(1)
                 m.bias.data.zero_()
 
-    
+
 def build_aspp(backbone, output_stide, BatchNorm):
     return ASPP(backbone, output_stide, BatchNorm)
 
 
 if __name__ == "__main__":
     model = build_aspp('resnet', 16, nn.BatchNorm2d)
-    input = torch.rand(2, 2048, 33, 33) # when batch = 1, batchnorm is error
+    input = torch.rand(2, 2048, 33, 33)  # when batch = 1, batchnorm is error
     model.train()
     output = model(input)
     pass

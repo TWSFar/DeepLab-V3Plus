@@ -23,18 +23,18 @@ except:
 class VOCSegmentation(Dataset):
 
     NUM_CLASSES = 21
-    
+
     def __init__(self,
                  args,
                  base_dir=Path.db_root_dir('voc'),
                  split='train'):
-        
+
         super().__init__()
         self.args = args
         self._base_dir = base_dir
         self._img_dir = osp.join(self._base_dir, 'JPEGImages')
         self._cat_dir = osp.join(self._base_dir, 'SegmentationClass')
-        
+
         if isinstance(split, str):
             self.split = [split]
         else:
@@ -45,8 +45,8 @@ class VOCSegmentation(Dataset):
         self.im_ids = []
         self.images = []
         self.categories = []
-        
-        for split in self.split:
+
+        for splt in self.split:
             with open(osp.join(_splits_dir, split + '.txt'), 'r') as f:
                 lines = f.read().splitlines()
 
@@ -64,17 +64,16 @@ class VOCSegmentation(Dataset):
             # Display stats
             print('Number of images in {}: {:d}'.format(split, len(self.images)))
 
-
     def __len__(self):
         return len(self.images)
-    
+
     def __getitem__(self, index):
         _img, _target = self._make_img_gt_point_pair(index)
         sample = {'image': _img, 'label': _target}
 
         for split in self.split:
             return self._transforms(sample, split)
-    
+
     def _transforms(self, sample, split):
         if split == 'train':
             composed_transforms = transforms.Compose([
@@ -91,7 +90,7 @@ class VOCSegmentation(Dataset):
                 ctf.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
                 ctf.ToTensor()])
             return composed_transforms(sample)
-    
+
     def _make_img_gt_point_pair(self, index):
         _img = Image.open(self.images[index]).convert('RGB')
         _target = Image.open(self.categories[index])

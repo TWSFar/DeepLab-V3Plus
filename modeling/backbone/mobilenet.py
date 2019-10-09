@@ -5,6 +5,7 @@ import math
 from modeling.sync_batchnorm.batchnorm import SynchronizedBatchNorm2d
 import torch.utils.model_zoo as model_zoo
 
+
 def conv_bn(inp, oup, stride, BatchNorm):
     return nn.Sequential(
         nn.Conv2d(inp, oup, 3, stride, 1, bias=False),

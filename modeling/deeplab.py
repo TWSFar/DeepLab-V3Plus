@@ -2,7 +2,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import sys
-sys.path.append('C:\\Users\\TWSF\\Desktop\\ResNet\\')
+import os.path as osp
+sys.path.insert(0, osp.join(osp.dirname(osp.abspath(__file__)), '../'))
 from modeling.sync_batchnorm.batchnorm import SynchronizedBatchNorm2d
 from modeling.aspp import build_aspp
 from modeling.decoder import build_decoder
@@ -15,12 +16,12 @@ class DeepLab(nn.Module):
         super(DeepLab, self).__init__()
         if backbone == 'drn':
             output_stride = 8
-        
-        if sync_bn == True:
+
+        if sync_bn is True:
             BatchNorm = SynchronizedBatchNorm2d
         else:
             BatchNorm = nn.BatchNorm2d
-        
+
         self.backbone = build_backbone(backbone, output_stride, BatchNorm)
         self.aspp = build_aspp(backbone, output_stride, BatchNorm)
         self.decoder = build_decoder(num_classes, backbone, BatchNorm)
@@ -53,7 +54,7 @@ class DeepLab(nn.Module):
                     for p in m[1].parameters():
                         if p.requires_grad:
                             yield p
-        
+
     def get_10x_lr_params(self):
         modules = [self.aspp, self.decoder]
         for i in range(len(modules)):
