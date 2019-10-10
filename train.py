@@ -98,7 +98,8 @@ class Trainer(object):
         tbar = tqdm(self.train_loader)
         num_img_tr = len(self.train_loader)
         for i, sample in enumerate(tbar):
-            image, target = sample['image'].to(self.args.device), sample['label'].to(self.args.device)
+            image = sample['image'].to(self.args.device)
+            target = sample['label'].to(self.args.device)
             self.scheduler(self.optimizer, i, epoch, self.best_pred)
             self.optimizer.zero_grad()
             output = self.model(image)
@@ -106,11 +107,11 @@ class Trainer(object):
             loss.backward()
             self.optimizer.step()
             train_loss += loss.item()
-            tbar.set_description('Train loss: %.3f' % (train_loss / (i+1)))
+            tbar.set_description('Train loss: %.3f' % (train_loss / (i + 1)))
             self.writer.add_scalar('train/total_loss_iter', loss.item(), i + num_img_tr * epoch)
 
             # Show 10 * 3 inference results each epoch
-            if (num_img_tr // 10) and i % (num_img_tr // 10) == 0:
+            if i % (num_img_tr // 10) == 0:
                 global_step = i + num_img_tr * epoch
                 self.summary.visualize_image(self.writer, self.args.dataset, image, target, output, global_step)
 
@@ -134,7 +135,8 @@ class Trainer(object):
         tbar = tqdm(self.val_loader, desc='\r')
         test_loss = 0.0
         for i, sample in enumerate(tbar):
-            image, target = sample['image'].to(self.args.device), sample['label'].to(self.args.device) 
+            image = sample['image'].to(self.args.device)
+            target = sample['label'].to(self.args.device)
             with torch.no_grad():
                 output = self.model(image)
             loss = self.criterion(output, target)

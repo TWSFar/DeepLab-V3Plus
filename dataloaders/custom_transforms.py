@@ -48,7 +48,7 @@ class FixedResize(object):
         return {'image': img,
                 'label': mask}
 
-                
+
 class Normalize(object):
     """Normalize a tensor image with mean and standard deviation.
     Args:
@@ -96,7 +96,6 @@ class RandomHorizontalFlip(object):
                 'label': mask}
 
 
-
 class RandomRotate(object):
     def __init__(self, degree):
         self.degree = degree
@@ -110,7 +109,7 @@ class RandomRotate(object):
 
         return {'image': img,
                 'label': mask}
-                
+
 
 class RandomScaleCrop(object):
     def __init__(self, base_size, crop_size, fill=0):

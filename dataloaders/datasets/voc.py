@@ -1,34 +1,30 @@
 import os
-import os.path as osp
 import numpy as np
+import os.path as osp
 from glob import glob
 from PIL import Image
 
 from torch.utils.data import Dataset
 from torchvision import transforms
-try:
-    from dataloaders import custom_transforms as ctf
-    from mypath import Path
-except:
-    import sys
-    sys.path.extend(['C:\\Users\\TWSF\\Desktop\\ResNet\\dataloaders', 
-                     'C:\\Users\\TWSF\\Desktop\\ResNet\\', 
-                     'C:\\Users\\TWSF\\Desktop\\ResNet\\dataloaders\\datasets'])
-    from dataloaders import custom_transforms as ctf
-    from mypath import Path
-
-    print('test back door')
+from dataloaders import custom_transforms as ctf
+from mypath import Path
 
 
 class VOCSegmentation(Dataset):
-
+    """
+    PascalVoc dataset
+    """
     NUM_CLASSES = 21
 
     def __init__(self,
                  args,
                  base_dir=Path.db_root_dir('voc'),
                  split='train'):
-
+        """
+        :param base_dir: path to VOC dataset directory
+        :param split: train/val
+        :param transform: transform to apply
+        """
         super().__init__()
         self.args = args
         self._base_dir = base_dir
@@ -40,7 +36,7 @@ class VOCSegmentation(Dataset):
         else:
             split.sort()
             self.split = split
-        _splits_dir = os.path.join(self._base_dir, 'ImageSets', 'Segmentation')
+        _splits_dir = osp.join(self._base_dir, 'ImageSets', 'Segmentation')
 
         self.im_ids = []
         self.images = []

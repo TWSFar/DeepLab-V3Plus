@@ -2,12 +2,7 @@ import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-try:
-    from modeling.sync_batchnorm.batchnorm import SynchronizedBatchNorm2d
-except:
-    import sys
-    sys.path.append('C:\\Users\\TWSF\\Desktop\\ResNet')
-    from modeling.sync_batchnorm.batchnorm import SynchronizedBatchNorm2d
+from modeling.sync_batchnorm.batchnorm import SynchronizedBatchNorm2d
 
 
 class _ASPPModule(nn.Module):

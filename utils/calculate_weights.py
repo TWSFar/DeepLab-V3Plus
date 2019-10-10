@@ -3,6 +3,7 @@ from tqdm import tqdm
 import numpy as np
 from mypath import Path
 
+
 def calculate_weigths_labels(dataset, dataloader, num_classes):
     # Create an instance from the data loader
     z = np.zeros((num_classes,))

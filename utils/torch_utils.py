@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 
 
 def select_device(force_cpu=False, is_head=False):
@@ -13,10 +14,10 @@ def select_device(force_cpu=False, is_head=False):
         x = [torch.cuda.get_device_properties(i) for i in range(ng)]
         if is_head:
             for i in range(ng):
-                print('Using CUDA device{} _CudaDeviceProperties(name={}, total_memory={}MB'.\
-                        format(i, x[i].name, round(x[i].total_memory/c)))
+                print('Using CUDA device{} _CudaDeviceProperties(name={}, total_memory={}MB'.
+                      format(i, x[i].name, round(x[i].total_memory/c)))
             print('')
-    return device, ng
+    return device, np.arange(ng).tolist()
 
 
 if __name__ == "__main__":

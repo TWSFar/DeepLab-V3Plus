@@ -1,15 +1,5 @@
-import argparse
-import sys
+from tensorboardX import SummaryWriter
+writer = SummaryWriter('debug')
+writer.add_scalar('Train/Loss', 3, 20)
+writer.add_scalar('Test/Accu', 10, 30)
 
-pass
-
-def func():
-    for i in range(0,3):
-        yield i
- 
-f = func()
-print(next(f))
-
-print(next(f))
-
-print(next(f))
