@@ -85,7 +85,7 @@ if args.sync_bn is None:
 if args.epochs is None:
     epochs = {
         'coco': 30,
-        'voc': 50}
+        'voc': 80}
     args.epochs = epochs[args.dataset.lower()]
 
 if args.batch_size is None:

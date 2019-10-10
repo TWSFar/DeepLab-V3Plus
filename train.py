@@ -68,6 +68,13 @@ class Trainer(object):
         self.scheduler = LR_Scheduler(args.lr_scheduler, args.lr,
                                       args.epochs, len(self.train_loader))
 
+        # Using mulgpu
+        # Keep this builded before resume
+        self.model = self.model.to(args.device)
+        if args.ng > 1:
+            self.model = torch.nn.DataParallel(self.model, device_ids=self.args.device_ids)
+            patch_replication_callback(self.mode)
+
         # Resuming checkpoint
         self.best_pred = 0.0
         if args.resume is not None:
@@ -81,12 +88,6 @@ class Trainer(object):
             self.best_pred = checkpoint['best_pred']
             print("=> loaded checkpoint '{}' (epoch {})"
                   .format(args.resume, checkpoint['epoch']))
-
-        # Using cuda
-        if args.ng > 1:
-            self.model = torch.nn.DataParallel(self.model, device_ids=self.args.device_ids)
-            patch_replication_callback(self.mode)
-        self.model = self.model.to(args.device)
 
         # Clear start epoch if fine-tuning
         if args.ft:
